@@ -1,0 +1,78 @@
+#TOP_BUILD_DIR=$$shadowed($$PWD) #编译路径
+TOP_SRC_DIR=$$PWD
+
+BIN_DIR
+LIBS_DIR
+
+
+CONFIG += c++11
+
+RO_NAMESPACE = Ro
+
+DEFINES += RO_NAMESPACE
+
+CONFIG(debug, debug|release){
+    #debug编译环境
+    #指定 debug 编译输出文件路径
+    win32 {
+    contains(QT_ARCH, i386) {
+        win32-g++{
+            BIN_DIR =  $${TOP_SRC_DIR}/bin/debug/mingw_x86
+        }else{
+            BIN_DIR =  $${TOP_SRC_DIR}/bin/debug/msvc_x86
+        }
+    }else {
+        win32-g++{
+            BIN_DIR =  $${TOP_SRC_DIR}/bin/debug/mingw_x64
+        }else{
+            BIN_DIR =  $${TOP_SRC_DIR}/bin/debug/msvc_x64
+        }
+      }
+    }
+    unix {
+#        target.path = /usr/lib
+#        INSTALLS += target
+         BIN_DIR =  $${TOP_SRC_DIR}/bin/debug/gcc_x64
+    }
+}else{
+    #release编译环境
+    #指定 release 编译输出文件路径
+    win32 {
+    contains(QT_ARCH, i386) {
+        win32-g++{
+            BIN_DIR =  $${TOP_SRC_DIR}/bin/release/mingw_x86
+        }else{
+            BIN_DIR =  $${TOP_SRC_DIR}/bin/release/msvc_x86
+        }
+    }else {
+        win32-g++{
+            BIN_DIR =  $${TOP_SRC_DIR}/bin/release/mingw_x64
+        }else{
+            BIN_DIR =  $${TOP_SRC_DIR}/bin/release/msvc_x64
+        }
+      }
+
+##这句话的目的是Release版也将生成“.pdb”后缀的调试信息文件
+#QMAKE_LFLAGS_RELEASE += /MAP
+#QMAKE_CFLAGS_RELEASE += /Zi
+#QMAKE_LFLAGS_RELEASE += /debug  /opt:ref
+    }
+    unix {
+       BIN_DIR =  $${TOP_SRC_DIR}/bin/release/gcc_x64
+    }
+}
+
+message($${BIN_DIR})
+
+#CONFIG += warn_off
+#QMAKE_CXXFLAGS += -source-charset:utf-8
+
+LIBS_DIR=$${BIN_DIR}
+#DLLDESTDIR= $${LIBS_DIR}
+DESTDIR = $${BIN_DIR}
+LIBS += -L$${LIBS_DIR}
+
+
+#预编译头文件
+#PRECOMPILED_HEADER += version.h
+
